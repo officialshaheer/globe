@@ -27,17 +27,41 @@ export class DashboardComponent implements OnInit {
     // Earth
     const sphere = new THREE.Mesh(
       new THREE.SphereBufferGeometry(1, 30, 30),
-      new THREE.MeshBasicMaterial({ map: textureLoader.load('assets/textures/earth2.jpeg') })
+      new THREE.MeshBasicMaterial({ map: textureLoader.load('assets/textures/earth.jpeg') })
     )
     scene.add(sphere)
 
     // Adding pins
-    const pin = new THREE.Mesh(
-      new THREE.SphereBufferGeometry(0.1, 20, 20),
-      new THREE.MeshBasicMaterial({color: 0xff0000})
+    const pin1 = new THREE.Mesh(
+      new THREE.SphereBufferGeometry(0.03, 20, 20),
+      new THREE.MeshBasicMaterial({ color: 0xff0000 })
     )
-    scene.add(pin)
-    pin.position.set(1,0,0)
+
+    const pin2 = new THREE.Mesh(
+      new THREE.SphereBufferGeometry(0.03, 20, 20),
+      new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+    )
+
+
+    let point1 = {
+      lat: 50.4501,
+      lng: 30.5234
+    }
+
+    let point2 = {
+      lat: 80.6345,
+      lng: 30.5528
+    }
+
+    let pos = this.convertLatLngToCartesian(point1);
+    let pos1 = this.convertLatLngToCartesian(point2);
+    
+
+    pin1.position.set(pos.x, pos.y, pos.z)
+    pin2.position.set(pos1.x, pos1.y, pos1.z)
+    scene.add(pin1)
+    scene.add(pin2)
+
 
     //Renderer Size
     const sizes = {
@@ -57,7 +81,7 @@ export class DashboardComponent implements OnInit {
     //Camera Initialisation
     this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 10000)
     this.camera.position.x = 0
-    this.camera.position.y = 5
+    this.camera.position.y = 3
     this.camera.position.z = 0
 
     scene.add(this.camera)
@@ -90,6 +114,20 @@ export class DashboardComponent implements OnInit {
     }
 
     tick();
+
+  }
+
+  convertLatLngToCartesian(p) {
+    let lat = (90 - p.lat) * Math.PI / 180;
+    let lng = (180 +p.lng)* Math.PI / 180;
+
+    let x = -Math.sin(lat) * Math.cos(lng);
+    let y = Math.sin(lat) * Math.sin(lng);
+    let z = Math.cos(lat);
+
+    return {
+      x,y,z
+    }
 
   }
 
